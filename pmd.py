@@ -1,12 +1,9 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import sum, col, round, lower
 import pyspark.sql.functions as F
 from pyspark.sql.types import StringType
 
-# Configuração do Spark com o conector MongoDB
+# Configuracao do Spark com o conector MongoDB
 spark = SparkSession.builder \
     .appName("MongoSparkConnector") \
     .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.4.0") \
