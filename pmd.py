@@ -1,3 +1,4 @@
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import sum, col, round, lower
 import pyspark.sql.functions as F
@@ -14,12 +15,13 @@ spark = SparkSession.builder \
 # Leitura dos dados do MongoDB
 df = spark.read.format("mongodb").load()
 
-# Tratamento dos dados --> Remoção de items com state name nulo e colunas não utilizadas
+# Tratamento dos dados --> Remoção de items com state name nulo
 df = df.filter(df["State Name"].isNotNull())
 
 # Normaliza o nome dos estados para minúsculas
 df = df.withColumn("State Name", lower(col("State Name")))
 
+# Consulta 1: Identificar a distribuição total de matrículas por raça/etnia em cada estado
 aggregated_df = df.groupBy("State Name").agg(
     sum("American Indian/Alaska Native Students").alias("Total American Indian/Alaska Native"),
     sum("Asian or Asian/Pacific Islander Students").alias("Total Asian or Asian/Pacific Islander"),
@@ -32,7 +34,6 @@ aggregated_df = df.groupBy("State Name").agg(
 )
 
 # Calcular a porcentagem para cada grupo racial/étnico
-# Consulta 1: Identificar a distribuição total de matrículas por raça/etnia em cada estado
 percentage_df = aggregated_df.select(
     col("State Name"),
     round((col("Total American Indian/Alaska Native") / col("Total Students")) * 100, 2).alias("Percentage American Indian/Alaska Native"),
